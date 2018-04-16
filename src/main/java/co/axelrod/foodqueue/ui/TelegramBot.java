@@ -157,11 +157,11 @@ public class TelegramBot extends TelegramLongPollingBot {
                 .setCaption("За пару минут до готовности бот пришлет уведомление."));
         switch (queueController.getKitchenStatus()) {
             case PREPARING: {
-                execute(prepareMessage(chatId, "Твой номер в очереди: " + user.getQueueNumber()));
+                execute(prepareMessage(chatId, "Твой номер в очереди: " + user.queueNumber));
                 execute(prepareMessage(chatId, "Кухня готовится."));
             } break;
             case READY: {
-                execute(prepareMessage(chatId, "Твой номер в очереди: " + user.getQueueNumber()));
+                execute(prepareMessage(chatId, "Твой номер в очереди: " + user.queueNumber));
                 execute(prepareMessage(chatId, "Текущий номер: " + queueController.getCurrentQueueNumber(), getWhereIsMyFoodKeyboard()));
             } break;
             case CLOSED: {
@@ -172,7 +172,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     public void sendGotItMessage(Long chatId, User user) throws TelegramApiException {
         execute(prepareMessage(chatId, EMOJI + "почти готов!"
-                + "\nТвой номер: " + user.getQueueNumber()
+                + "\nТвой номер: " + user.queueNumber
                 + "\nТекущий номер: " + queueController.getCurrentQueueNumber()));
         execute(prepareMessage(chatId, "Хочется добавки?", getInqueueAgainKeyboard()));
     }

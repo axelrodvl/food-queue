@@ -45,12 +45,12 @@ public class TelegramNotifier {
             while (usersToStartBot.hasNext()) {
                 User user = usersToStartBot.next();
                 try {
-                    telegramBot.sendJustAuthorizedMessage(user.getTelegramChatId());
-                    user.setProcessedByBot(true);
-                    userCollection.replaceOne(eq("_id", user.getId()), user, new UpdateOptions().upsert(true));
-                    log.debug("User " + user.getLogin() + " authorized and processed through Telegram");
+                    telegramBot.sendJustAuthorizedMessage(user.telegramChatId);
+                    user.processedByBot = true;
+                    userCollection.replaceOne(eq("_id", user.id), user, new UpdateOptions().upsert(true));
+                    log.debug("User " + user.login + " authorized and processed through Telegram");
                 } catch (TelegramApiException e) {
-                    log.error("Unable to authorize and process user " + user.getLogin() + " through Telegram");
+                    log.error("Unable to authorize and process user " + user.login + " through Telegram");
                     e.printStackTrace();
                 }
             }
@@ -74,12 +74,12 @@ public class TelegramNotifier {
                 while (usersToNotify.hasNext()) {
                     User user = usersToNotify.next();
                     try {
-                        telegramBot.sendGotItMessage(user.getTelegramChatId(), user);
-                        user.setNotificationSent(true);
-                        userCollection.replaceOne(eq("_id", user.getId()), user, new UpdateOptions().upsert(true));
-                        log.debug("User " + user.getLogin() + " notified through Telegram");
+                        telegramBot.sendGotItMessage(user.telegramChatId, user);
+                        user.notificationSent = true;
+                        userCollection.replaceOne(eq("_id", user.id), user, new UpdateOptions().upsert(true));
+                        log.debug("User " + user.login + " notified through Telegram");
                     } catch (TelegramApiException e) {
-                        log.error("Unable to notify user " + user.getLogin() + " through Telegram", e);
+                        log.error("Unable to notify user " + user.login + " through Telegram", e);
                     }
                 }
             }

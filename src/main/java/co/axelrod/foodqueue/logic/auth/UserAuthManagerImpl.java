@@ -59,8 +59,8 @@ public class UserAuthManagerImpl implements UserAuthManager {
         if(user == null) {
             user = userCollection.find(eq("login", login.toLowerCase())).first();
             if(user != null) {
-                user.setTelegramChatId(telegramChatId);
-                userCollection.replaceOne(eq("_id", user.getId()), user, new UpdateOptions().upsert(true));
+                user.telegramChatId = telegramChatId;
+                userCollection.replaceOne(eq("_id", user.id), user, new UpdateOptions().upsert(true));
             }
         }
         return user;

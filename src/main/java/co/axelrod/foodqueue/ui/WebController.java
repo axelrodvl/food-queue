@@ -49,11 +49,11 @@ public class WebController {
     public final String hello() {
         User user = userAuthManager.getOrCreateUser(SecurityContextHolder.getContext().getAuthentication());
 
-        if(user.getQueueNumber() == null) {
+        if(user.queueNumber == null) {
             return "<html>"
                     + "<body>"
                     + "<img src=\"" + PHOTO_URL + "\">"
-                    + "<h1>Здравствуйте, " + user.getLogin() + "</h1>"
+                    + "<h1>Здравствуйте, " + user.login + "</h1>"
                     + "<h1>Текущий номер очереди: " + queueController.getCurrentQueueNumber() + "</h1>"
                     + "<h2><a href=\"/enqueue\">Занять очередь</a></h2>"
                     + "</body>"
@@ -63,8 +63,8 @@ public class WebController {
         return "<html>"
                 + "<body>"
                 + "<img src=\"" + PHOTO_URL + "\">"
-                + "<h1>Здравствуйте, " + user.getLogin() + "</h1>"
-                + "<h1>Ваш номер в очереди: " + user.getQueueNumber() + "</h1>"
+                + "<h1>Здравствуйте, " + user.login + "</h1>"
+                + "<h1>Ваш номер в очереди: " + user.queueNumber + "</h1>"
                 + "<h1>Текущий номер очереди: " + queueController.getCurrentQueueNumber() + "</h1>"
                 + "<h2>Уже получили? Хочется еще? <a href=\"/enqueueAgain\">Занять очередь снова</a></h2>"
                 + "</body>"

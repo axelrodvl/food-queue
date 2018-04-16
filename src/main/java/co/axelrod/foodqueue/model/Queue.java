@@ -12,16 +12,14 @@ import org.bson.types.ObjectId;
 /**
  * Created by Vadim Axelrod (vadim@axelrod.co) on 27.02.2018.
  */
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @BsonDiscriminator
 public class Queue {
     @BsonId
-    private ObjectId id;
+    public ObjectId id;
 
-    private Integer currentNumber;
-    private Integer queueNumber;
-    private KitchenStatus kitchenStatus;
+    public Integer currentNumber;
+    public Integer queueNumber;
+    public KitchenStatus kitchenStatus;
 }

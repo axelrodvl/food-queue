@@ -33,42 +33,41 @@ public class QueueControllerImpl implements QueueController {
     }
 
     public final Integer getCurrentQueueNumber() {
-        return getOrCreateQueue().getCurrentNumber();
+        return getOrCreateQueue().currentNumber;
     }
 
     public final Integer incrementCurrentQueueNumber() {
         Queue queue = getOrCreateQueue();
-        queue.setCurrentNumber(queue.getCurrentNumber() + 1);
-        queueCollection.replaceOne(eq("_id", queue.getId()), queue, new UpdateOptions().upsert(true));
-        return queue.getCurrentNumber();
+        queue.currentNumber = queue.currentNumber + 1;
+        queueCollection.replaceOne(eq("_id", queue.id), queue, new UpdateOptions().upsert(true));
+        return queue.currentNumber;
     }
 
     public final KitchenStatus getKitchenStatus() {
         Queue queue = getOrCreateQueue();
-        return queue.getKitchenStatus();
+        return queue.kitchenStatus;
     }
 
     public final void setKitchenStatus(KitchenStatus status) {
         Queue queue = queueCollection.find().first();
-        queue.setKitchenStatus(status);
-        queueCollection.replaceOne(eq("_id", queue.getId()), queue, new UpdateOptions().upsert(true));
+        queue.kitchenStatus = status;
+        queueCollection.replaceOne(eq("_id", queue.id), queue, new UpdateOptions().upsert(true));
     }
 
     private Integer incrementQueueNumber() {
         Queue queue = getOrCreateQueue();
-        queue.setQueueNumber(queue.getQueueNumber() + 1);
-        queueCollection.replaceOne(eq("_id", queue.getId()), queue, new UpdateOptions().upsert(true));
-        return queue.getQueueNumber();
+        queue.queueNumber = queue.queueNumber + 1;
+        queueCollection.replaceOne(eq("_id", queue.id), queue, new UpdateOptions().upsert(true));
+        return queue.queueNumber;
     }
 
     public final void enqueue(User user) {
-        Integer queueNumber = incrementQueueNumber();
-        user.setQueueNumber(queueNumber);
-        userCollection.replaceOne(eq("_id", user.getId()), user, new UpdateOptions().upsert(true));
+        user.queueNumber = incrementQueueNumber();
+        userCollection.replaceOne(eq("_id", user.id), user, new UpdateOptions().upsert(true));
     }
 
     public final void dequeue(User user) {
-        userCollection.deleteOne(eq("_id", user.getId()));
-        user.setNotificationSent(null);
+        userCollection.deleteOne(eq("_id", user.id));
+        user.notificationSent = null;
     }
 }
