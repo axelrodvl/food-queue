@@ -1,4 +1,4 @@
-package co.axelrod.foodqueue.logic;
+package co.axelrod.foodqueue.logic.auth;
 
 import co.axelrod.foodqueue.model.User;
 import com.mongodb.client.MongoCollection;
@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.ldap.userdetails.LdapUserDetails;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.api.objects.Message;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -16,14 +15,15 @@ import static com.mongodb.client.model.Filters.eq;
  * Created by Vadim Axelrod (vadim@axelrod.co) on 27.02.2018.
  */
 @Component
-public class UserAuthManager {
+public class UserAuthManagerImpl implements UserAuthManager {
     private final MongoCollection<User> userCollection;
 
     @Autowired
-    public UserAuthManager(MongoCollection<User> userCollection) {
+    public UserAuthManagerImpl(MongoCollection<User> userCollection) {
         this.userCollection = userCollection;
     }
 
+    @Override
     public User createUserByTelegram(Authentication auth, Long telegramChatId) {
         LdapUserDetails ldapUserDetails = (LdapUserDetails) auth.getPrincipal();
         String login = ldapUserDetails.getUsername();
@@ -38,6 +38,7 @@ public class UserAuthManager {
         return user;
     }
 
+    @Override
     public User getOrCreateUser(Authentication auth) {
         LdapUserDetails ldapUserDetails = (LdapUserDetails) auth.getPrincipal();
         String login = ldapUserDetails.getUsername();
@@ -52,20 +53,16 @@ public class UserAuthManager {
         return user;
     }
 
-    public User getOrUpdateUser(Message message) {
-        Long telegramChatId = message.getChatId();
-
+    @Override
+    public User getOrUpdateUserByTelegram(String login, Long telegramChatId) {
         User user = userCollection.find(eq("telegramChatId", telegramChatId)).first();
-
         if(user == null) {
-            String login = message.getText();
             user = userCollection.find(eq("login", login.toLowerCase())).first();
             if(user != null) {
                 user.setTelegramChatId(telegramChatId);
                 userCollection.replaceOne(eq("_id", user.getId()), user, new UpdateOptions().upsert(true));
             }
         }
-
         return user;
     }
 }

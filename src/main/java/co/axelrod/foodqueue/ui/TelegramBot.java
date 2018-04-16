@@ -3,7 +3,7 @@ package co.axelrod.foodqueue.ui;
 import co.axelrod.foodqueue.config.token.TelegramTokenStorage;
 import co.axelrod.foodqueue.config.token.TelegramTokenStorageImpl;
 import co.axelrod.foodqueue.logic.QueueController;
-import co.axelrod.foodqueue.logic.UserAuthManager;
+import co.axelrod.foodqueue.logic.auth.UserAuthManager;
 import co.axelrod.foodqueue.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,6 @@ import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -106,21 +105,24 @@ public class TelegramBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         try {
             if ((update.hasMessage() && update.getMessage().hasText())) {
-                Long chatId = update.getMessage().getChatId();
-                log.debug("New request from Telegram bot with id: " + chatId);
+                Long telegramChatId = update.getMessage().getChatId();
+                log.debug("New request from Telegram bot with id: " + telegramChatId);
 
-                User user = userAuthManager.getOrUpdateUser(update.getMessage());
+                String login = update.getMessage().getText();
+                User user = userAuthManager.getOrUpdateUserByTelegram(login, telegramChatId);
                 if (user == null) {
-                    sendHelloMessage(chatId);
+                    sendHelloMessage(telegramChatId);
                 } else {
-                    sendWaitingMessage(chatId, user);
+                    sendWaitingMessage(telegramChatId, user);
                 }
             } else if (update.hasCallbackQuery()) {
-                Long chatId = update.getCallbackQuery().getMessage().getChatId();
-                log.debug("New callback query from Telegram bot with id: " + chatId);
+                Long telegramChatId = update.getCallbackQuery().getMessage().getChatId();
+                log.debug("New callback query from Telegram bot with id: " + telegramChatId);
 
                 if (update.getCallbackQuery().getData().equals("enqueueAgain")) {
-                    User user = userAuthManager.getOrUpdateUser(update.getCallbackQuery().getMessage());
+                    String login = update.getCallbackQuery().getMessage().getText();
+                    User user = userAuthManager.getOrUpdateUserByTelegram(login, telegramChatId);
+
                     queueController.dequeue(user);
                     queueController.enqueue(user);
 
@@ -129,7 +131,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                     answerCallbackQuery.setText("Очередь занята");
 
                     execute(answerCallbackQuery);
-                    sendWaitingMessage(chatId, user);
+                    sendWaitingMessage(telegramChatId, user);
                 }
             }
         } catch (TelegramApiException ex) {

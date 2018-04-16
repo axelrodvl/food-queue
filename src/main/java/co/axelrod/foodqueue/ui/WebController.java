@@ -1,7 +1,7 @@
 package co.axelrod.foodqueue.ui;
 
 import co.axelrod.foodqueue.logic.QueueController;
-import co.axelrod.foodqueue.logic.UserAuthManager;
+import co.axelrod.foodqueue.logic.auth.UserAuthManager;
 import co.axelrod.foodqueue.logic.enums.KitchenStatus;
 import co.axelrod.foodqueue.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
