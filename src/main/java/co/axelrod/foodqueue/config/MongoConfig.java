@@ -18,26 +18,30 @@ import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 @Configuration
 public class MongoConfig {
+    private static final String MODEL_PACKAGE = "co.axelrod.foodqueue.model";
+
     @Value("${mongo.host}")
     private String host;
 
     @Value("${mongo.port}")
     private Integer port;
 
+    @Value("${mongo.database}")
+    private String database;
+
     @Bean
     public MongoDatabase mongoDatabase() {
-        CodecProvider codecProvider = PojoCodecProvider.builder()
-                .register("co.axelrod.foodqueue.model")
-                .build();
-
-        CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(),
-                fromProviders(codecProvider));
-
         MongoClient client = new MongoClient(new ServerAddress(host, port));
-
         return client
-                .getDatabase("foodQueue")
-                .withCodecRegistry(pojoCodecRegistry);
+                .getDatabase(database)
+                .withCodecRegistry(createCodecRegistry());
+    }
+
+    private CodecRegistry createCodecRegistry() {
+        CodecProvider codecProvider = PojoCodecProvider.builder()
+                .register(MODEL_PACKAGE)
+                .build();
+        return fromRegistries(MongoClient.getDefaultCodecRegistry(), fromProviders(codecProvider));
     }
 
     @Bean
