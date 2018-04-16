@@ -9,3 +9,6 @@
 .settings/
 .metadata
 **/bin/**
+
+# Telegram token
+src/main/java/co/axelrod/foodqueue/config/token/TelegramTokenStorageImpl.java
