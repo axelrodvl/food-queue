@@ -1,5 +1,7 @@
 package co.axelrod.foodqueue.ui;
 
+import co.axelrod.foodqueue.config.token.TelegramTokenStorage;
+import co.axelrod.foodqueue.config.token.TelegramTokenStorageImpl;
 import co.axelrod.foodqueue.logic.QueueController;
 import co.axelrod.foodqueue.logic.UserAuthManager;
 import co.axelrod.foodqueue.model.User;
@@ -35,18 +37,17 @@ public class TelegramBot extends TelegramLongPollingBot {
     @Autowired
     UserAuthManager userAuthManager;
 
+    TelegramTokenStorage telegramTokenStorage = new TelegramTokenStorageImpl();
+
     private static final String PHOTO_URL = "https://cdn-cf-static.catery.ru/storage/menu/item/3/7/5/37547/preview_preview_image-cdjfMYAbH6olsP1D6jnhTJrWGzy5g-peeQ.jpg";
 
     private static final String EMOJI = "\uD83C\uDF68";
 
-    @Value("${host}")
+    @Value("${server.host}")
     private String host;
 
-    @Value("${port}")
+    @Value("${server.port}")
     private String port;
-
-    @Value("telegram.bot.token")
-    private String botToken;
 
     private InlineKeyboardMarkup getLoginKeyboard(Long chatId) {
         InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
@@ -181,6 +182,6 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotToken() {
-        return botToken;
+        return telegramTokenStorage.getBotToken();
     }
 }

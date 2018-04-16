@@ -22,10 +22,10 @@ public class WebController {
 
     private static final String PHOTO_URL = "https://cdn-cf-static.catery.ru/storage/menu/item/3/7/5/37547/preview_preview_image-cdjfMYAbH6olsP1D6jnhTJrWGzy5g-peeQ.jpg";
 
-    @Value("${host}")
+    @Value("${server.host}")
     private String host;
 
-    @Value("${port}")
+    @Value("${server.port}")
     private String port;
 
     @Autowired
